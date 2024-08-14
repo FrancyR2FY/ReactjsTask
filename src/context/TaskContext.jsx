@@ -8,8 +8,7 @@ export function TaskContextProvider(props) {
   const [task, setTask] = useState([]);
 
   function createTask(tasks) {
-
-    if (tasks.title == "" || tasks.description == "") {
+    if (tasks.title === "" || tasks.description === "") {
       alert("VALLA A CAGAR");
     } else {
       setTask([
@@ -27,6 +26,16 @@ export function TaskContextProvider(props) {
     setTask(task.filter((task) => task.id !== taskId));
   }
 
+  function updateTask(taskId, newTitle, newDescription) {
+    setTask(
+      task.map((task) =>
+        task.id === taskId
+          ? { ...task, title: newTitle, description: newDescription }
+          : task
+      )
+    );
+  }
+
   useEffect(() => {
     setTask(data);
   }, []);
@@ -37,6 +46,7 @@ export function TaskContextProvider(props) {
         task,
         deleteTask,
         createTask,
+        updateTask, 
       }}
     >
       {props.children}
