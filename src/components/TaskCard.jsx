@@ -1,46 +1,58 @@
 import { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
 import { TaskContext } from "../context/TaskContext";
 
 function TaskCard({ task }) {
-  const { deleteTask, updateTask } = useContext(TaskContext); // asegúrate de tener la función updateTask en tu contexto
-  const [edit, setEdit] = useState(false);
-  const [nuevoTitulo, setNuevoTitulo] = useState(task.title);
-  const [nuevaDescripcion, setNuevaDescripcion] = useState(task.description);
+  const { deleteTask, updateTask } = useContext(TaskContext);
+  const { register, handleSubmit, reset, setValue } = useForm({
+    defaultValues: {
+      title: task.title,
+      description: task.description,
+    },
+  });
 
-  const handleGuardar = () => {
-    updateTask(task.id, nuevoTitulo, nuevaDescripcion); // llama a la función de actualización con los nuevos valores
+  const onSubmit = (data) => {
+    updateTask(task.id, data.title, data.description);
+    reset(); // Opcional: resetea el formulario después de guardar
     setEdit(false); // desactiva el modo de edición después de guardar
   };
+
+  const handleEdit = () => {
+    setValue("title", task.title);
+    setValue("description", task.description);
+    setEdit(true);
+  };
+
+  const [edit, setEdit] = useState(false);
 
   return (
     <div className="bg-gray-800 text-white p-4 rounded-md">
       {edit ? (
-        <>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <input
             className="bg-gray-700 text-white p-2 rounded-md w-full mb-2"
-            value={nuevoTitulo}
-            onChange={(e) => setNuevoTitulo(e.target.value)}
+            {...register("title", { required: true })}
           />
           <textarea
             className="bg-gray-700 text-white p-2 rounded-md w-full mb-2"
-            value={nuevaDescripcion}
-            onChange={(e) => setNuevaDescripcion(e.target.value)}
+            {...register("description", { required: true })}
           ></textarea>
           <div>
             <button
               className="bg-red-500 px-2 py-1 rounded-md mt-4 hover:bg-red-400"
+              type="button"
               onClick={() => setEdit(false)}
             >
               Cancelar
             </button>
             <button
               className="bg-blue-500 px-2 py-1 mr-10 rounded-md mt-4 hover:bg-blue-400"
-              onClick={handleGuardar}
+              type="submit"
             >
               Guardar
             </button>
           </div>
-        </>
+        </form>
       ) : (
         <>
           <h1 className="text-xl font-bold capitalize">{task.title}</h1>
@@ -54,7 +66,7 @@ function TaskCard({ task }) {
             </button>
             <button
               className="bg-blue-500 px-2 py-1 mr-10 rounded-md mt-4 hover:bg-blue-400"
-              onClick={() => setEdit(true)}
+              onClick={handleEdit}
             >
               Editar Tarea
             </button>
@@ -66,3 +78,5 @@ function TaskCard({ task }) {
 }
 
 export default TaskCard;
+ 
+

@@ -1,6 +1,5 @@
 import { createContext, useState, useEffect } from "react";
 import { tasks as data } from "../data/tasks";
-import TaskList from "../components/TaskList";
 
 export const TaskContext = createContext();
 
@@ -9,7 +8,7 @@ export function TaskContextProvider(props) {
 
   function createTask(tasks) {
     if (tasks.title === "" || tasks.description === "") {
-      alert("VALLA A CAGAR");
+      alert("Por favor, completa todos los campos");
     } else {
       setTask([
         ...task,
